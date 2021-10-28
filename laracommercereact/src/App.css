@@ -38,6 +38,8 @@ body {
 }
 .hambarger {
   background: gray;
+  display: flex;
+  justify-content: space-between;
 }
 .icon {
   padding: 0.8rem 1rem;

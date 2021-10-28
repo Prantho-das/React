@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .active {
+    @apply border-b-4 border-blue-200 border-r-0 transition-none duration-500 delay-100 !important;
+  }
+  .input {
+    @apply rounded-md border-2 border-green-300 outline-none;
+  }
+  .no-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .h-xl {
+    max-height: 100%;
+    height: calc(100vh - 8rem);
+  }
+  .btn{
+    @apply capitalize self-start text-white px-3 py-1.5 rounded-md bg-blue-500;
+  }
+}

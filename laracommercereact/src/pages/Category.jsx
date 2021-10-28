@@ -1,15 +1,62 @@
-import React, { useState } from "react";
-import { Title } from "../Global";
-import { Badge, Button, Table, Form } from "react-bootstrap";
-import { FaPlusCircle, FaMinusCircle } from "react-icons/fa";
-import Product from "../pages/Product";
-import Modals from "../component/Modals";
+import React, { useEffect, useState } from 'react';
+import { Title } from '../Global';
+import { Badge, Button, Table, Spinner } from 'react-bootstrap';
+import { FaPlusCircle, FaMinusCircle, FaEye } from 'react-icons/fa';
+import Modals from '../component/Modals';
+import toastify from '../helper.js';
+import axios from 'axios';
+import Pagination from 'react-js-pagination';
+import { FiEyeOff } from 'react-icons/fi';
+import Categoryinput from "../component/Categoryinput";
+
 function Category() {
+  const [category, setCategory] = useState({});
+  const catUpdate = (id) => {
+    window.confirm('Are you sure you want to update');
+    console.log(id);
+  };
+  const catDelete = (id) => {
+    window.confirm('Are you sure you want to Delete');
+    axios
+      .delete(`api/category/delete/${id}`)
+      .then((res) => {
+        toastify('info', res.data.msg);
+        catfetch();
+      })
+      .catch((err) => {
+        toastify('error', err.response.msg);
+      });
+  };
+  const catStatus = (id) => {
+    window.confirm('Are you Want to Update Status');
+    axios
+      .post(`api/category/disabled/${id}`)
+      .then((res) => {
+        catfetch();
+        toastify('info', res.data.msg);
+      })
+      .catch((err) => {
+        toastify('error', err.response.msg);
+      });
+  };
+  const catfetch = (pageno = 1) => {
+    axios
+      .get('/api/category?page=' + pageno)
+      .then((response) => {
+        setCategory({ ...response.data });
+      })
+      .catch((error) => {
+        toastify('error', 'Some problem occured');
+      });
+  };
+  useEffect(() => {
+    catfetch();
+  }, []);
   return (
-    <div>
+    <>
       <div className="title_bar">
         <Title>Category</Title>
-        <Modals title="Create Category" body={<Demo />} />
+        <Modals title="Create Category" body={<Categoryinput catfetch={catfetch} />} />
       </div>
       <hr />
       <Table responsive striped bordered hover size="sm">
@@ -22,112 +69,58 @@ function Category() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Toy</td>
-            <td>
-              <Badge variant="success justify-space-between">active</Badge>
-            </td>
-            <td>
-              <div className="d-flex">
-                <Button variant="success">
-                  <FaPlusCircle />
-                </Button>
-                <Button variant="danger ml-2">
-                  <FaMinusCircle />
-                </Button>
-              </div>
-            </td>
-          </tr>
+          {
+            category && category.data ? (
+              category.data.map((data, i) => {
+                return (
+                  <tr key={i}>
+                    <td>{++i}</td>
+                    <td>{data.category_name}</td>
+                    <td>
+                      <Badge variant="{data.category_status?'success':'danger'} justify-space-between">
+                        {data.category_status ? 'active' : 'deactive'}
+                      </Badge>
+                    </td>
+                    <td>
+                      <div className="d-flex">
+                        <Button variant="success" onClick={() => catUpdate(data.id)}>
+                          <FaPlusCircle />
+                        </Button>
+                        <Button variant="danger ml-2" onClick={() => catDelete(data.id)}>
+                          <FaMinusCircle />
+                        </Button>
+                        <Button variant="info ml-2" onClick={() => catStatus(data.id)}>
+                          {data.category_status ? <FiEyeOff /> : <FaEye />}
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              }))
+              :
+              <Spinner className='mx-auto' animation="border" variant="success" size="lg" />
+          }
         </tbody>
       </Table>
+      {category.data && (
+        <div className="pagination mx-auto">
+          <Pagination
+            activePage={category.current_page}
+            itemsCountPerPage={category.per_page}
+            totalItemsCount={category.total}
+            pageRangeDisplayed={5}
+            onChange={catfetch}
+            itemClass="page-item"
+            activeClass="active"
+            innerClass="pagination"
+            linkClass="page-link"
+            disabledClass="disabled"
+          />
+        </div>
+      )}
       <hr />
-    </div>
-  );
-}
-
-function Demo() {
-  const [error, seterror] = useState({
-    category_name: [],
-  });
-  const [category, setCategory] = useState({
-    category_name: "",
-    category_status: false,
-  });
-  const categoryName = (e) => {
-    setCategory({
-      ...category,
-      [e.target.name]:
-        e.target.type === "checkbox" ? e.target.checked : e.target.value,
-    });
-    console.log(e.target.checked);
-  };
-  const categorySubmit = (e) => {
-    e.preventDefault();
-    fetch("http://127.0.0.1:8000/api/category/create", {
-      method: "POST",
-      body: JSON.stringify(category),
-      headers: {
-        Authorization: "Bearer 3|hND8fU89qtyYn7FrbEEILli0p5WUXEmWtsmyhjnh",
-        "Content-Type": "application/json",
-        Accept: "applictaion/json",
-      },
-    })
-      .then((e) => e.json())
-      .then((res) => {
-        if (res.errors) {
-          seterror({
-            category_name: res.errors.category_name,
-          });
-          return false;
-        }
-        seterror({
-          category_name: [],
-        });
-        setCategory({
-          category_name:'',
-          category_status:false
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    console.log(category);
-  };
-  return (
-    <>
-      <Form onSubmit={categorySubmit}>
-        <Form.Group controlId="formBasicEmail">
-          <Form.Label>Category Name</Form.Label>
-          <Form.Control
-            value={category.category_name}
-            onChange={categoryName}
-            type="text"
-            name="category_name"
-            placeholder="Enter Category Name"
-          />
-          {error.category_name ? (
-            <p className="text-danger" key={error.category_name[0]}>
-              {error.category_name[0]}
-            </p>
-          ) : (
-            ""
-          )}
-        </Form.Group>
-        <Form.Group controlId="formBasicCheckbox">
-          <Form.Check
-            checked={category.category_status}
-            onChange={categoryName}
-            type="checkbox"
-            label="Check me out"
-            name="category_status"
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
-        </Button>
-      </Form>
     </>
   );
 }
+
 export default Category;

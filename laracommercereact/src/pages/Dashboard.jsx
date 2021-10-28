@@ -1,12 +1,47 @@
-import React from 'react'
-
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Helmet from "react-helmet";
+import { useSelector } from "react-redux";
+import toastify from "../helper";
 function Dashboard() {
-    return (
-        <div>
-            <h1>Dashboard</h1>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit illum omnis numquam doloremque officiis exercitationem quibusdam ipsum. Quia soluta voluptates quibusdam commodi eveniet, hic iusto laborum sit aliquid aspernatur minima est tenetur labore quos possimus et quae ducimus ullam praesentium vitae? Consectetur, dolor voluptatibus. Natus exercitationem dolorem vitae cumque, unde minima officiis optio voluptatem fugiat quis ex error praesentium! Excepturi sunt officia magnam qui tempora, commodi ut sapiente. Dolorem rem nulla eum suscipit aperiam! Debitis minus quisquam ea porro nesciunt provident accusamus consectetur aliquid! Temporibus mollitia exercitationem facilis minima ea? Aliquam iste nostrum voluptas adipisci possimus, eligendi saepe voluptatibus obcaecati minus atque dolor rem perspiciatis quae dolorem, quibusdam rerum dolore. Voluptatibus dolore animi unde tenetur adipisci voluptate consequatur repellendus provident alias? Sint, itaque deleniti quibusdam ad iste adipisci assumenda animi, vero quae dolores, dicta harum iure. Sint quasi voluptatem culpa consequuntur pariatur, obcaecati vel voluptatum cum itaque ratione accusantium, laudantium repudiandae alias mollitia similique dignissimos, ipsum ex odio fugiat omnis facere. Minus voluptatem iusto itaque velit assumenda magni eos asperiores nisi facilis sit. Excepturi culpa nisi alias nesciunt, natus error neque itaque quis hic rerum deserunt modi, dolorem similique repudiandae. Blanditiis et hic animi corrupti ipsum architecto quo commodi, quod totam nisi voluptate dolorem eius accusamus ullam sequi suscipit nobis saepe voluptatibus repudiandae itaque neque est nostrum pariatur? Perspiciatis atque quasi delectus recusandae dolorum nesciunt, consectetur quidem. Magnam enim amet sunt, odit mollitia facilis id sequi ea dignissimos, quaerat dolore consequuntur fuga nostrum porro nesciunt, quo commodi assumenda quis voluptate. Dicta adipisci, numquam aliquam rerum unde facere? Facere nihil eaque maiores, obcaecati est reprehenderit fugit quod quia officia unde alias illo sit aliquid quibusdam consequatur quis! Fugit explicabo fuga quod consequuntur, odio aperiam optio cumque nostrum ea tenetur, placeat aspernatur numquam animi commodi alias nam laborum dolores. Blanditiis tenetur et, cum omnis impedit at doloremque illo itaque provident accusantium maxime tempora nisi adipisci laboriosam quis quibusdam, dolor porro magnam. Temporibus reprehenderit in optio deserunt veritatis excepturi architecto autem repellendus, vero neque voluptatem at commodi tempore quasi possimus recusandae et cupiditate distinctio nisi! Tempora, adipisci perferendis eveniet nobis quaerat laudantium soluta consectetur quasi vel voluptatum illum eum? Vero cumque quod sequi fuga accusantium voluptas numquam, velit, placeat ipsa sit laudantium esse! Tempora saepe earum quo voluptates! Facilis adipisci, similique tenetur vitae magni distinctio, doloribus perspiciatis quam totam impedit doloremque libero itaque beatae iste. Laboriosam explicabo odio exercitationem nesciunt voluptate cupiditate soluta!
+  const state = useSelector(state => state.auth)
+  const [dashboard, setDashboard] = useState({})
+  const dashboardData = async () => {
+    try {
+      let res = await axios.get('api/dashboard')
+      if (res.status === 200) {
+        setDashboard({ ...res.data })
+      }
+    } catch (error) {
+      console.log(error)
+      toastify('error', "Some Problem Happend")
+    }
+  }
+  useEffect(() => {
+    dashboardData()
+  }, [])
+  return (
+    <>
+    <Helmet>
+      <title>laracommerse | dashboard</title>
+    </Helmet>
+      {state.auth ?
+        <div className='p-4'>
+          <div className="row">
+            {
+              Object.entries(dashboard).map((element, i) => {
+                return <div key={i} className="col-md-3 m-md-1 m-2 m col-sm-6 col-12 shadow-lg rounded-lg py-5 text-center">
+                  <h3>{element[1]}</h3>
+                  <h4>{element[0]}</h4>
+                </div>
+              })
+            }
+          </div>
         </div>
-    )
+        :
+        <h1 style={{ textAlign: "center", marginTop: "1rem" }}>Log in First</h1>}
+    </>
+  );
 }
 
-export default Dashboard
+export default Dashboard;

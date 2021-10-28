@@ -2,12 +2,11 @@ import React, { useState } from 'react'
 import {Button,Modal} from "react-bootstrap"
 function Modals({title,body}) {
      const [show, setShow] = useState(false);
-
      const handleClose = () => setShow(false);
      const handleShow = () => setShow(true);
     return (
       <>
-        <Button variant="primary" onClick={handleShow}>
+        <Button variant="primary" className="mr-2" onClick={handleShow}>
           {title}
         </Button>
 

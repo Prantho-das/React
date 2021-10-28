@@ -1,10 +1,10 @@
 let initialstate = {
-  name: "prantho",
+  cart: [],
 };
 function cart(state = initialstate, action) {
   switch (action.type) {
     case "CART_ADD":
-      return (state = { ...state, name: "prantho das" })
+      return (state = [ ...state ])
     default:
       return state;
   }

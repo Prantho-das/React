@@ -3,6 +3,9 @@ import styled from "styled-components";
 export const Title = styled.h1`
   font-size: 2rem;
   color: "black";
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
 `;
 export const Button = styled(Link)`
   outline: none;
@@ -23,6 +26,10 @@ export const SideNav = styled.div`
   position: fixed;
   overflow-x: hidden;
   transition: 0.3s linear;
+  &:hover {
+    width: 300px;
+    background: blue;
+  }
   @media (max-width: 768px) {
     width: ${(props) => (props.sidenav ? "200px" : "70px")};
   }
