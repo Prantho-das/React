@@ -12,10 +12,12 @@ function RowCards({ title, data }) {
         </h1>
         <div className="underline absolute left-7 w-1/12 h-1.5 rounded-md bg-pink-500"></div>
       </div>
-      <div className="flex py-1 overflow-x-scroll no-scroll overflow-y-hidden">
-        {data.map((d, i) => {
-          return <CardProduct product={d} key={i} />;
-        })}
+      <div className="overflow-auto">
+        <div className="p-4 mt-4 gap-3 inline-flex">
+          {data.map((d, i) => {
+            return <CardProduct product={d} key={i} />;
+          })}
+        </div>
       </div>
     </>
   );
