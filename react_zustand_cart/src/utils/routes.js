@@ -1,0 +1,5 @@
+export const PRODUCTS="/products"
+export const CARTS="/carts?userId"
+export const PRODUCT="/products/"
+export const CATEGORIES="/products/categories"
+export const CATEGORY="/products/category/"
